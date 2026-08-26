@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String?
+  firstname String?
+  lastname  String?
+  admin     Boolean  @default(false)
+  hash      String
+  salt      String
+  refresh   String?  @default("")
+  created   DateTime @default(now())
+  updated   DateTime @updatedAt
+  // posts     Post[]
+  // comments  Comment[]
+}
+
+// Can use for other models
+
+// model Post {
+//   id        String    @id @default(uuid())
+//   title     String
+//   subtitle  String?
+//   content   String
+//   published Boolean   @default(false)
+//   created   DateTime  @default(now())
+//   updated   DateTime  @updatedAt
+//   author    User      @relation(fields: [authorId], references: [id])
+//   authorId  String
+//   comments  Comment[]
+// }
+
+// model Comment {
+//   id       String   @id @default(uuid())
+//   content  String
+//   created  DateTime @default(now())
+//   updated  DateTime @updatedAt
+//   author   User     @relation(fields: [authorId], references: [id])
+//   authorId String
+//   post     Post     @relation(fields: [postId], references: [id])
+//   postId   String
+// }
