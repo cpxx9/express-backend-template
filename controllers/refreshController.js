@@ -2,6 +2,8 @@ require('dotenv/config');
 const jwt = require('jsonwebtoken');
 const { prisma } = require('../lib/prisma');
 
+const ACCESS_EXP = '15m';
+
 const refreshController = async (req, res, next) => {
   const { cookies } = req;
   if (!cookies?.jwt)
@@ -25,19 +27,21 @@ const refreshController = async (req, res, next) => {
         return res
           .status(403)
           .json({ success: false, msg: 'Invalid response' });
-      const accessToken = jwt.sign(
-        { sub: user.id, user, iat: Math.floor(Date.now() / 1000) },
-        process.env.ACCESS_SECRET,
-        { expiresIn: '10s' }
-      );
+
       delete user.hash;
       delete user.salt;
       delete user.refresh;
+
+      const accessToken = jwt.sign(
+        { sub: user.id, user, iat: Math.floor(Date.now() / 1000) },
+        process.env.ACCESS_SECRET,
+        { expiresIn: ACCESS_EXP }
+      );
       res.status(200).json({
         success: true,
         token: `Bearer ${accessToken}`,
         // change to 10-15m for prod
-        expiresIn: '10s'
+        expiresIn: ACCESS_EXP
       });
     });
   } catch (err) {
