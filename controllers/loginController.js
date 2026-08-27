@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const { prisma } = require('../lib/prisma');
 const { validPassword, issueJWT } = require('../utils/passwordUtils');
 const { validateLogin } = require('../utils/validations');
+const { refreshCookieOptions } = require('../config/cookieOptions');
 
 const loginController = [
   validateLogin,
@@ -25,37 +26,25 @@ const loginController = [
 
       const isValid = validPassword(req.body.password, user.hash, user.salt);
 
-      if (isValid) {
-        delete user.hash;
-        delete user.salt;
-        const tokens = await issueJWT(user);
-        const accessTokenObject = tokens.accessToken;
-        const refreshToken = tokens.refreshToken.token.split(' ')[1];
-        res.cookie('jwt', refreshToken, {
-          httpOnly: true,
-          sameSite: 'None',
-          secure: true,
-          maxAge: 24 * 60 * 60 * 1000
-        });
-        await prisma.user.update({
-          where: {
-            username: user.username
-          },
-          data: {
-            refresh: refreshToken
-          }
-        });
-        delete user.refresh;
-        res.status(200).json({
-          success: true,
-          token: accessTokenObject.token,
-          expiresIn: accessTokenObject.expires
-        });
-      } else {
-        res
+      if (!isValid) {
+        return res
           .status(401)
-          .json({ success: false, msg: 'incorrect username or password' });
+          .json({ success: false, mmsg: 'incorrect username or password' });
       }
+      const { accessToken, refreshToken } = issueJWT(user);
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { refresh: refreshToken.token }
+      });
+
+      res.cookie('jwt', refreshToken.token, refreshCookieOptions);
+
+      return res.status(200).json({
+        success: true,
+        token: accessToken.token,
+        expiresIn: accessToken.expires
+      });
     } catch (err) {
       return next(err);
     }
