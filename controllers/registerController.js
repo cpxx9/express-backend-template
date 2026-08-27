@@ -3,6 +3,7 @@ const { prisma } = require('../lib/prisma');
 const { genPassword, issueJWT } = require('../utils/passwordUtils');
 const { validateUser } = require('../utils/validations');
 const { prismaErrController } = require('../middleware/errorController');
+const { refreshCookieOptions } = require('../config/cookieOptions');
 
 const postNewUser = [
   validateUser,
@@ -13,6 +14,7 @@ const postNewUser = [
     }
 
     const { salt, hash } = genPassword(req.body.password);
+
     try {
       const user = await prisma.user.create({
         data: {
@@ -24,30 +26,24 @@ const postNewUser = [
           salt
         }
       });
-      delete user.hash;
-      delete user.salt;
-      const tokens = await issueJWT(user);
-      const accessTokenObject = tokens.accessToken;
-      const refreshToken = tokens.refreshToken.token.split(' ')[1];
-      res.cookie('jwt', refreshToken, {
-        httpOnly: true,
-        sameSite: 'None',
-        secure: true,
-        maxAge: 24 * 60 * 60 * 1000
-      });
-      delete user.refresh;
+
+      const { refreshToken, accessToken } = await issueJWT(user);
+
       await prisma.user.update({
         where: {
-          username: user.username
+          id: user.id
         },
         data: {
-          refresh: refreshToken
+          refresh: refreshToken.token
         }
       });
+
+      res.cookie('jwt', refreshToken.token, refreshCookieOptions);
+
       res.status(201).json({
         success: true,
-        token: accessTokenObject.token,
-        expiresIn: accessTokenObject.expires
+        token: accessToken.token,
+        expiresIn: accessToken.expires
       });
     } catch (err) {
       const newErr = prismaErrController(err);
