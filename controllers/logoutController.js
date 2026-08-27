@@ -9,24 +9,11 @@ const logoutController = async (req, res, next) => {
   const refreshToken = cookies.jwt;
 
   try {
-    const user = await prisma.user.findFirst({
-      where: {
-        refresh: refreshToken
-      }
+    await prisma.refreshToken.deleteMany({
+      where: { token: refreshToken }
     });
 
     res.clearCookie('jwt', baseCookieOptions);
-
-    if (user) {
-      await prisma.user.update({
-        where: {
-          id: user.id
-        },
-        data: {
-          refresh: ''
-        }
-      });
-    }
 
     res.sendStatus(204);
   } catch (err) {

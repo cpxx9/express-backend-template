@@ -1,3 +1,5 @@
+const { REFRESH_EXP_MS } = require('../lib/constants');
+
 const isProd = process.env.NODE_ENV === 'production';
 
 const baseCookieOptions = {
@@ -9,7 +11,7 @@ const baseCookieOptions = {
 
 const refreshCookieOptions = {
   ...baseCookieOptions,
-  maxAge: 24 * 60 * 60 * 1000
+  maxAge: REFRESH_EXP_MS
 };
 
 module.exports = { baseCookieOptions, refreshCookieOptions };

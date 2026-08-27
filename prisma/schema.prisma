@@ -15,17 +15,28 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  email     String?
-  firstname String?
-  lastname  String?
-  admin     Boolean  @default(false)
-  hash      String
-  salt      String
-  refresh   String?  @default("")
-  created   DateTime @default(now())
-  updated   DateTime @updatedAt
+  id            String         @id @default(uuid())
+  username      String         @unique
+  email         String?
+  firstname     String?
+  lastname      String?
+  admin         Boolean        @default(false)
+  hash          String
+  salt          String
+  created       DateTime       @default(now())
+  updated       DateTime       @updatedAt
+  refreshTokens RefreshToken[]
   // posts     Post[]
   // comments  Comment[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }

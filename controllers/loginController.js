@@ -33,9 +33,12 @@ const loginController = [
       }
       const { accessToken, refreshToken } = issueJWT(user);
 
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { refresh: refreshToken.token }
+      await prisma.refreshToken.create({
+        data: {
+          token: refreshToken.token,
+          userId: user.id,
+          expiresAt: refreshToken.expiresAt
+        }
       });
 
       res.cookie('jwt', refreshToken.token, refreshCookieOptions);

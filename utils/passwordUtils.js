@@ -1,7 +1,7 @@
 require('dotenv/config');
 const bcrypt = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
-const { ACCESS_EXP, REFRESH_EXP } = require('../lib/constants');
+const { ACCESS_EXP, REFRESH_EXP, REFRESH_EXP_MS } = require('../lib/constants');
 
 function validPassword(password, hash, salt) {
   const hashVerify = bcrypt.hashSync(password, salt);
@@ -39,7 +39,8 @@ function issueJWT(user) {
     },
     refreshToken: {
       token: refreshToken,
-      expires: ACCESS_EXP
+      expires: ACCESS_EXP,
+      expiresAt: new Date(Date.now() + REFRESH_EXP_MS)
     }
   };
 }

@@ -27,14 +27,13 @@ const postNewUser = [
         }
       });
 
-      const { refreshToken, accessToken } = await issueJWT(user);
+      const { refreshToken, accessToken } = issueJWT(user);
 
-      await prisma.user.update({
-        where: {
-          id: user.id
-        },
+      await prisma.refreshToken.create({
         data: {
-          refresh: refreshToken.token
+          token: refreshToken.token,
+          userId: user.id,
+          expiresAt: refreshToken.expiresAt
         }
       });
 
