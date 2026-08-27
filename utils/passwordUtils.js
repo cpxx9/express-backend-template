@@ -25,7 +25,6 @@ function issueJWT(user) {
   };
 
   const accessToken = jsonwebtoken.sign(payload, process.env.ACCESS_SECRET, {
-    // change to 10-15m for prod
     expiresIn: ACCESS_EXP
   });
 
