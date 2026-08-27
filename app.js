@@ -1,4 +1,3 @@
-require('dotenv/config');
 const express = require('express');
 const cors = require('cors');
 const passport = require('passport');
@@ -9,9 +8,6 @@ const { notFound } = require('./middleware/auth');
 const { errorController } = require('./middleware/errorController');
 const { corsOptions } = require('./config/corsOptions');
 const { credentials } = require('./middleware/credentials');
-const { startSessionPruning } = require('./jobs/pruneSessions');
-
-const PORT = process.env.PORT || 3333;
 
 require('./config/passport')(passport);
 
@@ -27,7 +23,4 @@ app.use('/api', indexRouter);
 app.use('*', notFound);
 app.use(errorController);
 
-app.listen(PORT, () => {
-  console.log(`API listening on port ${PORT}`);
-  startSessionPruning();
-});
+module.exports = { app };
