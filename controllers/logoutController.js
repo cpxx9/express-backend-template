@@ -1,5 +1,5 @@
 const { prisma } = require('../lib/prisma');
-const { refreshCookieOptions } = require('../config/cookieOptions');
+const { baseCookieOptions } = require('../config/cookieOptions');
 
 const logoutController = async (req, res, next) => {
   // On frontend, delete the access token from memory
@@ -15,7 +15,7 @@ const logoutController = async (req, res, next) => {
       }
     });
 
-    res.clearCookie('jwt', refreshCookieOptions);
+    res.clearCookie('jwt', baseCookieOptions);
 
     if (user) {
       await prisma.user.update({
