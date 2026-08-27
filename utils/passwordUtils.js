@@ -1,18 +1,16 @@
 require('dotenv/config');
-const crypto = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const jsonwebtoken = require('jsonwebtoken');
-const { prisma } = require('../lib/prisma');
+const { ACCESS_EXP, REFRESH_EXP } = require('../lib/constants');
 
 function validPassword(password, hash, salt) {
-  const hashVerify = crypto.hashSync(password, salt);
+  const hashVerify = bcrypt.hashSync(password, salt);
   return hash === hashVerify;
 }
 
 function genPassword(password) {
-  const salt = crypto.genSaltSync(10);
-  const hash = crypto.hashSync(password, salt);
-  console.log(salt);
-  console.log(hash);
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
 
   return {
     salt,
@@ -23,36 +21,26 @@ function genPassword(password) {
 async function issueJWT(user) {
   const payload = {
     sub: user.id,
-    user,
-    iat: Math.floor(Date.now() / 1000)
+    admin: user.admin
   };
 
   const accessToken = jsonwebtoken.sign(payload, process.env.ACCESS_SECRET, {
     // change to 10-15m for prod
-    expiresIn: '10m'
+    expiresIn: ACCESS_EXP
   });
 
   const refreshToken = jsonwebtoken.sign(payload, process.env.REFRESH_SECRET, {
-    expiresIn: '1d'
-  });
-
-  await prisma.user.update({
-    where: {
-      id: user.id
-    },
-    data: {
-      refresh: refreshToken
-    }
+    expiresIn: REFRESH_EXP
   });
 
   return {
     accessToken: {
       token: `Bearer ${accessToken}`,
-      expires: accessToken.expiresIn
+      expires: ACCESS_EXP
     },
     refreshToken: {
-      token: `Bearer ${refreshToken}`,
-      expires: refreshToken.expiresIn
+      token: refreshToken,
+      expires: ACCESS_EXP
     }
   };
 }
