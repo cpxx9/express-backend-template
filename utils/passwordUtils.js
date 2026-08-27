@@ -18,7 +18,7 @@ function genPassword(password) {
   };
 }
 
-async function issueJWT(user) {
+function issueJWT(user) {
   const payload = {
     sub: user.id,
     admin: user.admin
