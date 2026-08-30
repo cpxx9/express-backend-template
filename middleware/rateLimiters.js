@@ -6,7 +6,7 @@ const isTest = process.env.NODE_ENV === 'test';
 const authLimiter = isTest
   ? passthrough
   : rateLimit({
-      windowms: 15 * 60 * 1000,
+      windowMs: 15 * 60 * 1000,
       max: 10,
       standardHeaders: true,
       legacyHeaders: false,
@@ -20,7 +20,7 @@ const authLimiter = isTest
 const refreshLimiter = isTest
   ? passthrough
   : rateLimit({
-      windowms: 15 * 60 * 1000,
+      windowMs: 15 * 60 * 1000,
       max: 100,
       standardHeaders: true,
       legacyHeaders: false,
