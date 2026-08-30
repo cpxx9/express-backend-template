@@ -1,6 +1,10 @@
 const { validationResult } = require('express-validator');
 const { prisma } = require('../lib/prisma');
-const { validPassword, issueJWT } = require('../utils/passwordUtils');
+const {
+  validPassword,
+  issueJWT,
+  hashToken
+} = require('../utils/passwordUtils');
 const { validateLogin } = require('../utils/validations');
 const { refreshCookieOptions } = require('../config/cookieOptions');
 
@@ -35,7 +39,7 @@ const loginController = [
 
       await prisma.refreshToken.create({
         data: {
-          token: refreshToken.token,
+          token: hashToken(refreshToken.token),
           userId: user.id,
           expiresAt: refreshToken.expiresAt
         }

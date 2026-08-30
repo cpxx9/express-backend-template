@@ -1,7 +1,7 @@
 require('dotenv/config');
 const jwt = require('jsonwebtoken');
 const { prisma } = require('../lib/prisma');
-const { issueJWT } = require('../utils/passwordUtils');
+const { issueJWT, hashToken } = require('../utils/passwordUtils');
 const { refreshCookieOptions } = require('../config/cookieOptions');
 
 const refreshController = async (req, res, next) => {
@@ -13,10 +13,11 @@ const refreshController = async (req, res, next) => {
   }
 
   const refreshToken = cookies.jwt;
+  const tokenHash = hashToken(refreshToken);
 
   try {
     const session = await prisma.refreshToken.findUnique({
-      where: { token: refreshToken },
+      where: { token: tokenHash },
       include: { user: true }
     });
 
@@ -44,7 +45,7 @@ const refreshController = async (req, res, next) => {
         await prisma.refreshToken.update({
           where: { id: session.id },
           data: {
-            token: newRefresh.token,
+            token: hashToken(newRefresh.token),
             expiresAt: newRefresh.expiresAt
           }
         });
