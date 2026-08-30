@@ -29,7 +29,7 @@ const loginController = [
       if (!isValid) {
         return res
           .status(401)
-          .json({ success: false, mmsg: 'incorrect username or password' });
+          .json({ success: false, msg: 'incorrect username or password' });
       }
       const { accessToken, refreshToken } = issueJWT(user);
 

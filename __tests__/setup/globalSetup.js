@@ -1,3 +1,5 @@
+require('dotenv').config({ path: '.env.test' });
+
 const { execSync } = require('node:child_process');
 
 module.exports = async () => {

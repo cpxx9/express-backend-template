@@ -44,7 +44,7 @@ function issueJWT(user) {
     },
     refreshToken: {
       token: refreshToken,
-      expires: ACCESS_EXP,
+      expires: REFRESH_EXP,
       expiresAt: new Date(Date.now() + REFRESH_EXP_MS)
     }
   };

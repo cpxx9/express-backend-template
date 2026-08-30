@@ -11,18 +11,18 @@ const passMatchErr = 'Passwords must match.';
 
 module.exports.validateLogin = [
   body('username')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Username ${existsErr}`)
     .trim(),
   body('password')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Password ${existsErr}`)
-    .trim(),
+    .trim()
 ];
 
 module.exports.validateUser = [
   body('username')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Username ${existsErr}`)
     .trim()
     .isLength({ min: 5, max: 30 })
@@ -45,22 +45,22 @@ module.exports.validateUser = [
     .isLength({ min: 1, max: 25 })
     .withMessage(`Last name ${nameLengthErr}`),
   body('password')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Password ${existsErr}`)
     .trim()
     .isLength({ min: 8, max: 32 })
     .withMessage(`Password ${passLengthErr}`),
   body('confirmPassword')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Confirm password ${existsErr}`)
     .trim()
     .custom((value, { req }) => value === req.body.password)
-    .withMessage(passMatchErr),
+    .withMessage(passMatchErr)
 ];
 
 module.exports.validatePost = [
   body('title')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Title ${existsErr}`)
     .trim()
     .isLength({ min: 5, max: 30 })
@@ -71,18 +71,18 @@ module.exports.validatePost = [
     .isLength({ min: 5, max: 30 })
     .withMessage(`Subtitle ${usernameLengthErr}`),
   body('content')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Main content ${existsErr}`)
-    .trim(),
+    .trim()
 ];
 
 module.exports.validateComment = [
   body('content')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Comment content ${existsErr}`)
     .trim(),
   body('postId')
-    .exists({ values: 'undefined' | 'null' })
+    .exists({ values: 'falsy' })
     .withMessage(`Post ID ${existsErr}`)
-    .trim(),
+    .trim()
 ];

@@ -46,27 +46,19 @@ const listUser = async (req, res, next) => {
 };
 
 const updateUser = async (req, res, next) => {
-  const oldUser = req.user;
-  const data = { ...req.body };
-  delete data.id;
-  delete data.refresh;
-  delete data.admin;
-  delete data.author;
+  const { firstname, lastname, email } = req.body;
+  const data = {};
+  if (firstname !== undefined) data.firstname = firstname;
+  if (lastname !== undefined) data.lastname = lastname;
+  if (email !== undefined) data.email = email;
 
   try {
     const user = await prisma.user.update({
-      where: {
-        id: req.params.userId
-      },
-      data
+      where: { id: req.params.userId },
+      data,
+      omit: { hash: true, salt: true }
     });
-    delete user.hash;
-    delete oldUser.hash;
-    delete user.salt;
-    delete oldUser.salt;
-    delete user.refresh;
-    delete oldUser.refresh;
-    res.status(200).json({ success: true, data: [user, oldUser] });
+    res.status(200).json({ success: true, data: user });
   } catch (err) {
     next(err);
   }
