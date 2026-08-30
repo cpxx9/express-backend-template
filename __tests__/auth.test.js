@@ -8,6 +8,7 @@ const {
   getJwtValue,
   validUser
 } = require('./helpers/auth');
+const { hashToken } = require('../utils/passwordUtils');
 
 describe('POST /api/login and /api/refresh - session creation and rotation', () => {
   test('logs in and inserts one new session row', async () => {
@@ -51,10 +52,12 @@ describe('POST /api/login and /api/refresh - session creation and rotation', () 
     await request(app).get('/api/refresh').set('Cookie', first.cookie);
 
     const secondTokenAfterFresh = await prisma.refreshToken.findUnique({
-      where: { token: secondTokenBeforeRefresh }
+      where: { token: hashToken(secondTokenBeforeRefresh) }
     });
     expect(secondTokenAfterFresh).not.toBe(null);
-    expect(secondTokenAfterFresh.token).toBe(secondTokenBeforeRefresh);
+    expect(secondTokenAfterFresh.token).toBe(
+      hashToken(secondTokenBeforeRefresh)
+    );
   });
 
   test('Original token gets rejected after new one is made, 403 status', async () => {
@@ -87,7 +90,7 @@ describe('GET /api/logout session isolation and rejecting old sessions', () => {
 
     const remaining = await prisma.refreshToken.findMany();
     expect(remaining).toHaveLength(1);
-    expect(remaining[0].token).toBe(secondTokenBeforeLogout);
+    expect(remaining[0].token).toBe(hashToken(secondTokenBeforeLogout));
   });
 
   test('logout with no cookie is a safe 204 no-op', async () => {
@@ -110,7 +113,7 @@ describe('GET /api/logout session isolation and rejecting old sessions', () => {
     await prisma.refreshToken.deleteMany();
     await prisma.refreshToken.create({
       data: {
-        token: expiredToken,
+        token: hashToken(expiredToken),
         userId: user.id,
         expiresAt: new Date(Date.now() - 1000)
       }
