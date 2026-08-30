@@ -21,7 +21,7 @@ async function loginUser(
   username = validUser.username,
   password = validUser.password
 ) {
-  const res = (await request(app).post('api/login')).setEncoding({
+  const res = await request(app).post('/api/login').send({
     username,
     password
   });

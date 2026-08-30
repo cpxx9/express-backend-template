@@ -1,5 +1,6 @@
 require('dotenv/config');
 const bcrypt = require('bcryptjs');
+const crypto = require('node:crypto');
 const jsonwebtoken = require('jsonwebtoken');
 const { ACCESS_EXP, REFRESH_EXP, REFRESH_EXP_MS } = require('../lib/constants');
 
@@ -28,9 +29,13 @@ function issueJWT(user) {
     expiresIn: ACCESS_EXP
   });
 
-  const refreshToken = jsonwebtoken.sign(payload, process.env.REFRESH_SECRET, {
-    expiresIn: REFRESH_EXP
-  });
+  const refreshToken = jsonwebtoken.sign(
+    { ...payload, jti: crypto.randomUUID() },
+    process.env.REFRESH_SECRET,
+    {
+      expiresIn: REFRESH_EXP
+    }
+  );
 
   return {
     accessToken: {
