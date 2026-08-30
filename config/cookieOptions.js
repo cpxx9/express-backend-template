@@ -1,6 +1,7 @@
 const { REFRESH_EXP_MS } = require('../lib/constants');
 
-const isDevOrTest = process.env.NODE_ENV === 'test' || 'development';
+const isDevOrTest =
+  process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development';
 
 const baseCookieOptions = {
   httpOnly: true,
