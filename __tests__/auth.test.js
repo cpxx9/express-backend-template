@@ -89,41 +89,41 @@ describe('GET /api/logout session isolation and rejecting old sessions', () => {
     const remaining = await prisma.refreshToken.findMany();
     expect(remaining).toHaveLength(1);
     expect(remaining[0].token).toBe(secondTokenBeforeLogout);
+  });
 
-    test('logout with no cookie is a safe 204 no-op', async () => {
-      const res = await request(app).get('/api/logout');
-      expect(res.status).toBe(204);
+  test('logout with no cookie is a safe 204 no-op', async () => {
+    const res = await request(app).get('/api/logout');
+    expect(res.status).toBe(204);
+  });
+
+  test('expired session is rejected with 403 and deleted', async () => {
+    await registerUser();
+    const user = await prisma.user.findUnique({
+      where: { username: validUser.username }
     });
 
-    test('expired session is rejected with 403 and deleted', async () => {
-      await registerUser();
-      const user = await prisma.user.findUnique({
-        where: { username: validUser.username }
-      });
+    const expiredToken = jwt.sign(
+      { sub: user.id, admin: user.admin },
+      process.env.REFRESH_SECRET,
+      { expiresIn: '-10s' }
+    );
 
-      const expiredToken = jwt.sign(
-        { sub: user.id, admin: user.admin },
-        process.env.REFRESH_SECRET,
-        { expiresIn: '-10s' }
-      );
-
-      await prisma.refreshToken.deleteMany();
-      await prisma.refreshToken.create({
-        data: {
-          token: expiredToken,
-          userId: user.id,
-          expiresAt: new Date(Date.now() - 1000)
-        }
-      });
-
-      const res = await request(app)
-        .get('/api/refresh')
-        .set('Cookie', [`jwt=${expiredToken}`]);
-
-      expect(res.status).toBe(403);
-
-      const rows = await prisma.refreshToken.findMany();
-      expect(rows).toHaveLength(0);
+    await prisma.refreshToken.deleteMany();
+    await prisma.refreshToken.create({
+      data: {
+        token: expiredToken,
+        userId: user.id,
+        expiresAt: new Date(Date.now() - 1000)
+      }
     });
+
+    const res = await request(app)
+      .get('/api/refresh')
+      .set('Cookie', [`jwt=${expiredToken}`]);
+
+    expect(res.status).toBe(403);
+
+    const rows = await prisma.refreshToken.findMany();
+    expect(rows).toHaveLength(0);
   });
 });
