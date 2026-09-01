@@ -16,8 +16,8 @@ const app = express();
 // may be needed in prod
 // app.set('trust proxy', 1);
 app.use(credentials);
-app.use(cors(corsOptions));
 app.use(helmet());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

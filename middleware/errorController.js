@@ -1,13 +1,4 @@
-const errorController = (err, req, res, next) => {
-  res.status(err.statusCode || 500).json({
-    title: err.name,
-    status: err.statusCode,
-    message: err.message,
-    info: err.info
-  });
-};
-
-const prismaErrController = (err) => {
+const normalizePrismaError = (err) => {
   const newErr = {};
   switch (err.code) {
     case 'P2002':
@@ -31,4 +22,22 @@ const prismaErrController = (err) => {
   return newErr;
 };
 
-module.exports = { errorController, prismaErrController };
+const isPrimaError = (err) =>
+  typeof err.code === 'string' && /^P\d{4}$/.test(err.code);
+
+// eslint-disable-next-line no-unused-vars
+const errorController = (err, req, res, next) => {
+  const normalized = isPrimaError(err) ? normalizePrismaError(err) : err;
+  const status = normalized.statusCode || 500;
+
+  if (status >= 500) console.error(err);
+
+  res.status(status).json({
+    title: normalized.name,
+    status,
+    message: normalized.message,
+    info: normalized.info
+  });
+};
+
+module.exports = { errorController };

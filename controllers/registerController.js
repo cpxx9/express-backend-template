@@ -2,7 +2,6 @@ const { validationResult } = require('express-validator');
 const { prisma } = require('../lib/prisma');
 const { genPassword, issueJWT, hashToken } = require('../utils/passwordUtils');
 const { validateUser } = require('../utils/validations');
-const { prismaErrController } = require('../middleware/errorController');
 const { refreshCookieOptions } = require('../config/cookieOptions');
 
 const postNewUser = [
@@ -45,8 +44,7 @@ const postNewUser = [
         expiresIn: accessToken.expires
       });
     } catch (err) {
-      const newErr = prismaErrController(err);
-      return next(newErr);
+      return next(err);
     }
   }
 ];
