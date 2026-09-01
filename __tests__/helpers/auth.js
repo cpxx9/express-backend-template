@@ -55,7 +55,7 @@ async function createUser({
 }
 
 async function getAccessToken(username, password = 'secretpass') {
-  const res = (await request(app).post('/api/login')).setEncoding({
+  const res = await request(app).post('/api/login').send({
     username,
     password
   });
