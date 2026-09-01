@@ -39,6 +39,11 @@ const listUser = async (req, res, next) => {
         // comments: true
       }
     });
+
+    if (!user) {
+      return res.status(404).json({ success: false, msg: 'User not found!' });
+    }
+
     res.status(200).json({ success: true, data: user });
   } catch (err) {
     next(err);
