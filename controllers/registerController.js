@@ -18,7 +18,7 @@ const postNewUser = [
     try {
       const user = await prisma.user.create({
         data: {
-          username: req.body.username,
+          username: req.body.username.toLowerCase().trim(),
           email: req.body.email,
           firstname: req.body.firstname,
           lastname: req.body.lastname,

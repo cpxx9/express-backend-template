@@ -13,7 +13,8 @@ module.exports.validateLogin = [
   body('username')
     .exists({ values: 'falsy' })
     .withMessage(`Username ${existsErr}`)
-    .trim(),
+    .trim()
+    .toLowerCase(),
   body('password')
     .exists({ values: 'falsy' })
     .withMessage(`Password ${existsErr}`)
@@ -28,8 +29,14 @@ module.exports.validateUser = [
     .isLength({ min: 5, max: 30 })
     .withMessage(`Username ${usernameLengthErr}`)
     .isAlphanumeric()
-    .withMessage(`Username ${usernameAlphaNumErr}`),
-  body('email').optional().trim().isEmail().withMessage(emailErr),
+    .withMessage(`Username ${usernameAlphaNumErr}`)
+    .toLowerCase(),
+  body('email')
+    .optional()
+    .trim()
+    .isEmail()
+    .withMessage(emailErr)
+    .normalizeEmail(),
   body('firstname')
     .optional()
     .trim()

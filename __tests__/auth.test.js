@@ -25,6 +25,22 @@ describe('POST /api/login and /api/refresh - session creation and rotation', () 
     expect(sessions).toHaveLength(1);
   });
 
+  test('username is case-insensitive for login', async () => {
+    await registerUser({ username: 'CamelCaseUser' });
+    const res = await request(app)
+      .post('/api/login')
+      .send({ username: 'camelcaseuser', password: validUser.password });
+    expect(res.status).toBe(200);
+  });
+
+  test('username whitespace does not countfor login', async () => {
+    await registerUser({ username: 'CamelCaseUser' });
+    const res = await request(app)
+      .post('/api/login')
+      .send({ username: 'camelcaseuser ', password: validUser.password });
+    expect(res.status).toBe(200);
+  });
+
   test('two logins as the same user create two different sessions', async () => {
     await registerUser();
     await prisma.refreshToken.deleteMany();
