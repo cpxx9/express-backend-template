@@ -72,11 +72,9 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const deletedUser = await prisma.user.delete({
-      where: { id: req.params.userId }
+      where: { id: req.params.userId },
+      omit: { hash: true }
     });
-
-    delete deletedUser.hash;
-    delete deletedUser.salt;
 
     res.status(200).json({ success: true, data: deletedUser });
   } catch (err) {
