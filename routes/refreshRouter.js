@@ -3,6 +3,6 @@ const { refreshController } = require('../controllers/refreshController');
 const { refreshLimiter } = require('../middleware/rateLimiters');
 
 const refreshRouter = Router();
-refreshRouter.get('/', refreshLimiter, refreshController);
+refreshRouter.post('/', refreshLimiter, refreshController);
 
 module.exports = { refreshRouter };

@@ -65,7 +65,7 @@ describe('POST /api/login and /api/refresh - session creation and rotation', () 
 
     const secondTokenBeforeRefresh = getJwtValue(second.cookie);
 
-    await request(app).get('/api/refresh').set('Cookie', first.cookie);
+    await request(app).post('/api/refresh').set('Cookie', first.cookie);
 
     const secondTokenAfterFresh = await prisma.refreshToken.findUnique({
       where: { token: hashToken(secondTokenBeforeRefresh) }
@@ -80,17 +80,17 @@ describe('POST /api/login and /api/refresh - session creation and rotation', () 
     const { cookie } = await registerUser();
     const oldToken = getJwtValue(cookie);
 
-    await request(app).get('/api/refresh').set('Cookie', cookie);
+    await request(app).post('/api/refresh').set('Cookie', cookie);
 
     const res = await request(app)
-      .get('/api/refresh')
+      .post('/api/refresh')
       .set('Cookie', [`jwt=${oldToken}`]);
 
     expect(res.status).toBe(403);
   });
 });
 
-describe('GET /api/logout session isolation and rejecting old sessions', () => {
+describe('POST /api/logout session isolation and rejecting old sessions', () => {
   test('logging out on one device keeps sessions on other devices in tact', async () => {
     await registerUser();
     await prisma.refreshToken.deleteMany();
@@ -100,7 +100,7 @@ describe('GET /api/logout session isolation and rejecting old sessions', () => {
     const secondTokenBeforeLogout = getJwtValue(second.cookie);
 
     const res = await request(app)
-      .get('/api/logout')
+      .post('/api/logout')
       .set('Cookie', first.cookie);
     expect(res.status).toBe(204);
 
@@ -110,7 +110,7 @@ describe('GET /api/logout session isolation and rejecting old sessions', () => {
   });
 
   test('logout with no cookie is a safe 204 no-op', async () => {
-    const res = await request(app).get('/api/logout');
+    const res = await request(app).post('/api/logout');
     expect(res.status).toBe(204);
   });
 
@@ -136,7 +136,7 @@ describe('GET /api/logout session isolation and rejecting old sessions', () => {
     });
 
     const res = await request(app)
-      .get('/api/refresh')
+      .post('/api/refresh')
       .set('Cookie', [`jwt=${expiredToken}`]);
 
     expect(res.status).toBe(403);
