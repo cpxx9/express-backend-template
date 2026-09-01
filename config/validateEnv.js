@@ -12,11 +12,14 @@ function validateEnv() {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    ['ACCESS_SECRET', 'REFRESH_SECRET'].forEach((key) => {
-      if (process.env[key].length < 32) {
-        throw new Error(`${key} is too short for production (need ≥32 chars).`);
-      }
-    });
+    const weak = ['ACCESS_SECRET', 'REFRESH_SECRET'].filter(
+      (key) => process.env[key].length < 32
+    );
+    if (weak.length > 0) {
+      throw new Error(
+        `JWT secret(s) too short for production (need ≥32 chars): ${weak.join(', ')}`
+      );
+    }
   }
 }
 
