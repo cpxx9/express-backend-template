@@ -5,7 +5,7 @@ const { registerUser, validUser } = require('./helpers/auth');
 describe('POST /api/register — validation & duplicates', () => {
   test('duplicate username returns 409', async () => {
     await registerUser();
-    const { res } = await registerUser(); // same username again
+    const { res } = await registerUser();
     expect(res.status).toBe(409);
   });
 
@@ -55,7 +55,7 @@ describe('POST /api/login — failure modes', () => {
 
     expect(wrongPass.status).toBe(noUser.status);
     expect(wrongPass.body.msg).toBe(noUser.body.msg);
-    expect(wrongPass.body.msg).toBeDefined(); // guards the old `mmsg` typo from returning
+    expect(wrongPass.body.msg).toBeDefined();
   });
 });
 
