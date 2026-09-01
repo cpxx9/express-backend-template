@@ -22,7 +22,6 @@ model User {
   lastname      String?
   admin         Boolean        @default(false)
   hash          String
-  salt          String
   created       DateTime       @default(now())
   updated       DateTime       @updatedAt
   refreshTokens RefreshToken[]

@@ -12,7 +12,7 @@ const postNewUser = [
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { salt, hash } = genPassword(req.body.password);
+    const { hash } = genPassword(req.body.password);
 
     try {
       const user = await prisma.user.create({
@@ -21,8 +21,7 @@ const postNewUser = [
           email: req.body.email,
           firstname: req.body.firstname,
           lastname: req.body.lastname,
-          hash,
-          salt
+          hash
         }
       });
 

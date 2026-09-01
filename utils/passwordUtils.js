@@ -4,9 +4,8 @@ const crypto = require('node:crypto');
 const jsonwebtoken = require('jsonwebtoken');
 const { ACCESS_EXP, REFRESH_EXP, REFRESH_EXP_MS } = require('../lib/constants');
 
-function validPassword(password, hash, salt) {
-  const hashVerify = bcrypt.hashSync(password, salt);
-  return hash === hashVerify;
+function validPassword(password, hash) {
+  return bcrypt.compareSync(password, hash);
 }
 
 function genPassword(password) {
@@ -14,7 +13,6 @@ function genPassword(password) {
   const hash = bcrypt.hashSync(password, salt);
 
   return {
-    salt,
     hash
   };
 }

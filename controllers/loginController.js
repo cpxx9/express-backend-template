@@ -28,7 +28,7 @@ const loginController = [
           .json({ success: false, msg: 'incorrect username or password' });
       }
 
-      const isValid = validPassword(req.body.password, user.hash, user.salt);
+      const isValid = validPassword(req.body.password, user.hash);
 
       if (!isValid) {
         return res
