@@ -33,7 +33,7 @@ describe('POST /api/login and /api/refresh - session creation and rotation', () 
     expect(res.status).toBe(200);
   });
 
-  test('username whitespace does not countfor login', async () => {
+  test('username whitespace does not count for login', async () => {
     await registerUser({ username: 'CamelCaseUser' });
     const res = await request(app)
       .post('/api/login')

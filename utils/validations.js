@@ -65,31 +65,31 @@ module.exports.validateUser = [
     .withMessage(passMatchErr)
 ];
 
-module.exports.validatePost = [
-  body('title')
-    .exists({ values: 'falsy' })
-    .withMessage(`Title ${existsErr}`)
-    .trim()
-    .isLength({ min: 5, max: 30 })
-    .withMessage(`Title ${usernameLengthErr}`),
-  body('subtitle')
-    .optional()
-    .trim()
-    .isLength({ min: 5, max: 30 })
-    .withMessage(`Subtitle ${usernameLengthErr}`),
-  body('content')
-    .exists({ values: 'falsy' })
-    .withMessage(`Main content ${existsErr}`)
-    .trim()
-];
+// module.exports.validatePost = [
+//   body('title')
+//     .exists({ values: 'falsy' })
+//     .withMessage(`Title ${existsErr}`)
+//     .trim()
+//     .isLength({ min: 5, max: 30 })
+//     .withMessage(`Title ${usernameLengthErr}`),
+//   body('subtitle')
+//     .optional()
+//     .trim()
+//     .isLength({ min: 5, max: 30 })
+//     .withMessage(`Subtitle ${usernameLengthErr}`),
+//   body('content')
+//     .exists({ values: 'falsy' })
+//     .withMessage(`Main content ${existsErr}`)
+//     .trim()
+// ];
 
-module.exports.validateComment = [
-  body('content')
-    .exists({ values: 'falsy' })
-    .withMessage(`Comment content ${existsErr}`)
-    .trim(),
-  body('postId')
-    .exists({ values: 'falsy' })
-    .withMessage(`Post ID ${existsErr}`)
-    .trim()
-];
+// module.exports.validateComment = [
+//   body('content')
+//     .exists({ values: 'falsy' })
+//     .withMessage(`Comment content ${existsErr}`)
+//     .trim(),
+//   body('postId')
+//     .exists({ values: 'falsy' })
+//     .withMessage(`Post ID ${existsErr}`)
+//     .trim()
+// ];

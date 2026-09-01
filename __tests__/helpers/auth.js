@@ -1,5 +1,7 @@
 const request = require('supertest');
 const { app } = require('../../app');
+const { prisma } = require('../../lib/prisma');
+const { genPassword } = require('../../utils/passwordUtils');
 
 const validUser = {
   username: 'testuser',
@@ -33,4 +35,38 @@ function getJwtValue(cookieArray) {
   return jwtCookie ? jwtCookie.split(';')[0].replace('jwt=', '') : null;
 }
 
-module.exports = { validUser, registerUser, loginUser, getJwtValue };
+async function createUser({
+  username = 'seeduser',
+  admin = false,
+  password = 'secretpass'
+} = {}) {
+  const uname = username.toLowerCase();
+  const { hash } = genPassword(password);
+  return prisma.user.create({
+    data: {
+      username: uname,
+      email: `${uname}@test.com`,
+      firstname: 'test',
+      lastname: 'User',
+      admin,
+      hash
+    }
+  });
+}
+
+async function getAccessToken(username, password = 'secretpass') {
+  const res = (await request(app).post('/api/login')).setEncoding({
+    username,
+    password
+  });
+  return res.body.token;
+}
+
+module.exports = {
+  validUser,
+  registerUser,
+  loginUser,
+  getJwtValue,
+  createUser,
+  getAccessToken
+};
