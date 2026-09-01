@@ -10,6 +10,14 @@ function validateEnv() {
         `Check your .env file`
     );
   }
+
+  if (process.env.NODE_ENV === 'production') {
+    ['ACCESS_SECRET', 'REFRESH_SECRET'].forEach((key) => {
+      if (process.env[key].length < 32) {
+        throw new Error(`${key} is too short for production (need ≥32 chars).`);
+      }
+    });
+  }
 }
 
 module.exports = { validateEnv };
