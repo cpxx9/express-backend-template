@@ -61,7 +61,7 @@ const updateUser = async (req, res, next) => {
     const user = await prisma.user.update({
       where: { id: req.params.userId },
       data,
-      omit: { hash: true, salt: true }
+      omit: { hash: true }
     });
     res.status(200).json({ success: true, data: user });
   } catch (err) {
