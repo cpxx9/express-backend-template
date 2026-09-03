@@ -15,18 +15,18 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  username      String         @unique
-  email         String?        @unique
-  firstname     String?
-  lastname      String?
-  admin         Boolean        @default(false)
-  hash          String
-  created       DateTime       @default(now())
-  updated       DateTime       @updatedAt
-  refreshTokens RefreshToken[]
-  // posts     Post[]
-  // comments  Comment[]
+  id             String         @id @default(uuid())
+  username       String         @unique
+  email          String?        @unique
+  firstname      String?
+  lastname       String?
+  admin          Boolean        @default(false)
+  hash           String
+  created        DateTime       @default(now())
+  updated        DateTime       @updatedAt
+  failedAttempts Int            @default(0)
+  lockedUntil    DateTime?
+  refreshTokens  RefreshToken[]
 }
 
 model RefreshToken {
