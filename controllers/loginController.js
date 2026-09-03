@@ -1,4 +1,4 @@
-const { validationResult } = require('express-validator');
+const asyncHandler = require('express-async-handler');
 const { prisma } = require('../lib/prisma');
 const {
   validPassword,
@@ -6,56 +6,42 @@ const {
   hashToken
 } = require('../utils/passwordUtils');
 const { validateLogin } = require('../utils/validations');
+const { handleValidation } = require('../middleware/handleValidation');
 const { refreshCookieOptions } = require('../config/cookieOptions');
+const CustomUnauthorizedError = require('../errors/CustomUnauthorizedError');
 
 const loginController = [
   validateLogin,
-  async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
-    }
-    try {
-      const user = await prisma.user.findUnique({
-        where: {
-          username: req.body.username
-        }
-      });
-
-      if (!user) {
-        return res
-          .status(401)
-          .json({ success: false, msg: 'incorrect username or password' });
+  handleValidation,
+  asyncHandler(async (req, res) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        username: req.body.username
       }
+    });
 
-      const isValid = validPassword(req.body.password, user.hash);
-
-      if (!isValid) {
-        return res
-          .status(401)
-          .json({ success: false, msg: 'incorrect username or password' });
-      }
-      const { accessToken, refreshToken } = issueJWT(user);
-
-      await prisma.refreshToken.create({
-        data: {
-          token: hashToken(refreshToken.token),
-          userId: user.id,
-          expiresAt: refreshToken.expiresAt
-        }
-      });
-
-      res.cookie('jwt', refreshToken.token, refreshCookieOptions);
-
-      return res.status(200).json({
-        success: true,
-        token: accessToken.token,
-        expiresIn: accessToken.expires
-      });
-    } catch (err) {
-      return next(err);
+    if (!user || !validPassword(req.body.password, user.hash)) {
+      throw new CustomUnauthorizedError('incorrect username or password');
     }
-  }
+
+    const { accessToken, refreshToken } = issueJWT(user);
+
+    await prisma.refreshToken.create({
+      data: {
+        token: hashToken(refreshToken.token),
+        userId: user.id,
+        expiresAt: refreshToken.expiresAt
+      }
+    });
+
+    res.cookie('jwt', refreshToken.token, refreshCookieOptions);
+
+    return res.status(200).json({
+      success: true,
+      token: accessToken.token,
+      expiresIn: accessToken.expires
+    });
+  })
 ];
 
 module.exports = {
