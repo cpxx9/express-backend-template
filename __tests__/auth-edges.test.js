@@ -54,8 +54,8 @@ describe('POST /api/login — failure modes', () => {
       .send({ username: 'nobodyhere', password: 'whatever' });
 
     expect(wrongPass.status).toBe(noUser.status);
-    expect(wrongPass.body.msg).toBe(noUser.body.msg);
-    expect(wrongPass.body.msg).toBeDefined();
+    expect(wrongPass.body.message).toBe(noUser.body.message);
+    expect(wrongPass.body.message).toBeDefined();
   });
 });
 
