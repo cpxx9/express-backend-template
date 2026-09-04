@@ -5,10 +5,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/__tests__/setup/setupAfterEnv.js'],
   testMatch: ['**/__tests__/**/*.test.js'],
   transform: {
-    '^.+\\.(ts|js)$': [
-      'ts-jest',
-      { tsconfig: 'tsconfig.json', isolateModules: true }
-    ]
+    '^.+\\.(ts|js)$': ['@swc/jest']
   },
   moduleFileExtensions: ['ts', 'js', 'json', 'node']
 };
