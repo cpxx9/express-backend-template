@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app } = require('../app');
+const { app } = require('../src/app');
 const { createUser, getAccessToken } = require('./helpers/auth');
 
 const FAKE_ID = '00000000-0000-0000-0000-000000000000';

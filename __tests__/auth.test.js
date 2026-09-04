@@ -1,14 +1,14 @@
 const jwt = require('jsonwebtoken');
 const request = require('supertest');
-const { app } = require('../app');
-const { prisma } = require('../lib/prisma');
+const { app } = require('../src/app');
+const { prisma } = require('../src/lib/prisma');
 const {
   registerUser,
   loginUser,
   getJwtValue,
   validUser
 } = require('./helpers/auth');
-const { hashToken } = require('../utils/passwordUtils');
+const { hashToken } = require('../src/utils/passwordUtils');
 
 describe('POST /api/login and /api/refresh - session creation and rotation', () => {
   test('logs in and inserts one new session row', async () => {
