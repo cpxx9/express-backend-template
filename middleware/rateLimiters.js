@@ -7,7 +7,7 @@ const authLimiter = isTest
   ? passthrough
   : rateLimit({
       windowMs: 15 * 60 * 1000,
-      max: 10,
+      max: 20,
       standardHeaders: true,
       legacyHeaders: false,
       message: {

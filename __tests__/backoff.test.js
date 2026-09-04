@@ -4,7 +4,7 @@ const { prisma } = require('../lib/prisma');
 const { createUser } = require('./helpers/auth');
 
 const THRESHOLD = 5;
-const PASSWORD = 'secretsauce';
+const PASSWORD = 'secretpass';
 
 async function failLogin(username, times) {
   const results = [];

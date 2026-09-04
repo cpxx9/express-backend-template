@@ -5,9 +5,11 @@ const {
   issueJWT,
   hashToken
 } = require('../utils/passwordUtils');
+const { backoffMs } = require('../utils/backoff');
 const { validateLogin } = require('../utils/validations');
 const { handleValidation } = require('../middleware/handleValidation');
 const { refreshCookieOptions } = require('../config/cookieOptions');
+const { LOGIN_FAIL_THRESHOLD } = require('../lib/constants');
 const CustomUnauthorizedError = require('../errors/CustomUnauthorizedError');
 
 const loginController = [
@@ -20,8 +22,33 @@ const loginController = [
       }
     });
 
-    if (!user || !validPassword(req.body.password, user.hash)) {
-      throw new CustomUnauthorizedError('incorrect username or password');
+    const failMsg = 'incorrect username or password';
+
+    if (!user) {
+      throw new CustomUnauthorizedError(failMsg);
+    }
+
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      throw new CustomUnauthorizedError(failMsg);
+    }
+
+    const isValid = validPassword(req.body.password, user.hash);
+
+    if (!isValid) {
+      const failedAttempts = user.failedAttempts + 1;
+      const data = { failedAttempts };
+      if (failedAttempts > LOGIN_FAIL_THRESHOLD) {
+        data.lockedUntil = new Date(Date.now() + backoffMs(failedAttempts));
+      }
+      await prisma.user.update({ where: { id: user.id }, data });
+      throw new CustomUnauthorizedError(failMsg);
+    }
+
+    if (user.failedAttempts !== 0 || user.lockedUntil !== null) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { failedAttempts: 0, lockedUntil: null }
+      });
     }
 
     const { accessToken, refreshToken } = issueJWT(user);
