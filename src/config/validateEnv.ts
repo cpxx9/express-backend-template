@@ -1,6 +1,6 @@
 const REQUIRED = ['ACCESS_SECRET', 'REFRESH_SECRET', 'DATABASE_URL'];
 
-function validateEnv() {
+export function validateEnv() {
   const missing = REQUIRED.filter(
     (key) => !process.env[key] || process.env[key].trim() === ''
   );
@@ -13,7 +13,8 @@ function validateEnv() {
 
   if (process.env.NODE_ENV === 'production') {
     const weak = ['ACCESS_SECRET', 'REFRESH_SECRET'].filter(
-      (key) => process.env[key].length < 32
+      // the above check makes sure that key isn't undefined
+      (key) => process.env[key]!.length < 32
     );
     if (weak.length > 0) {
       throw new Error(
@@ -22,5 +23,3 @@ function validateEnv() {
     }
   }
 }
-
-module.exports = { validateEnv };
