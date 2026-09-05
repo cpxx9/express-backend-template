@@ -13,7 +13,10 @@
     "resolveJsonModule": true,
     "checkJs": false,
     "sourceMap": true,
-    "declaration": false
+    "declaration": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true
   },
   "include": ["./src/**/*"]
 }
