@@ -10,7 +10,23 @@
   "parserOptions": {
     "ecmaVersion": "latest"
   },
+  "settings": {
+    "import/resolver": {
+      "typescript": {},
+      "node": {
+        "extensions": [".js", ".ts", ".json"]
+      }
+    }
+  },
   "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "ts": "never"
+      }
+    ],
     "no-console": "warn",
     "consistent-return": "off",
     "jest/no-disabled-tests": "warn",
