@@ -1,0 +1,31 @@
+const express = require("express");
+const cors = require("cors");
+const passport = require("passport");
+const path = require("node:path");
+const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const { indexRouter } = require("./routes/indexRouter");
+const { notFound } = require("./middleware/auth");
+const { errorController } = require("./middleware/errorController");
+const { corsOptions } = require("./config/corsOptions");
+const { credentials } = require("./middleware/credentials");
+
+require("./config/passport")(passport);
+
+const app = express();
+// may be needed in prod
+// app.set('trust proxy', 1);
+app.use(credentials);
+app.use(helmet());
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(express.static(path.join(__dirname, "../public")));
+
+app.use("/api", indexRouter);
+app.use("*", notFound);
+app.use(errorController);
+
+module.exports = { app };

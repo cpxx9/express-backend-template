@@ -1,6 +1,6 @@
 const request = require('supertest');
-const { app } = require('../app');
-const { prisma } = require('../lib/prisma');
+const { app } = require('../src/app');
+const { prisma } = require('../src/lib/prisma');
 const { createUser } = require('./helpers/auth');
 
 const THRESHOLD = 5;

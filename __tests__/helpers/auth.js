@@ -1,7 +1,7 @@
 const request = require('supertest');
-const { app } = require('../../app');
-const { prisma } = require('../../lib/prisma');
-const { genPassword } = require('../../utils/passwordUtils');
+const { app } = require('../../src/app');
+const { prisma } = require('../../src/lib/prisma');
+const { genPassword } = require('../../src/utils/passwordUtils');
 
 const validUser = {
   username: 'testuser',

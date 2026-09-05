@@ -1,5 +1,5 @@
-const { prisma } = require('../lib/prisma');
-const { pruneExpiredSessions } = require('../jobs/pruneSessions');
+const { prisma } = require('../src/lib/prisma');
+const { pruneExpiredSessions } = require('../src/jobs/pruneSessions');
 const { createUser } = require('./helpers/auth');
 
 describe('pruneExpiredSessions', () => {

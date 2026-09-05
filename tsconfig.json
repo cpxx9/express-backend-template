@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "./built",
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "target": "es2015",
+    "strict": true,
+    "module": "node16",
+    "ignoreDeprecations": "6.0",
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "checkJs": false,
+    "sourceMap": true,
+    "declaration": false
+  },
+  "include": ["./src/**/*"]
+}

@@ -131,4 +131,4 @@ dist
 .pnp.*
 
 src/generated/prisma
-/generated/prisma
+generated/prisma

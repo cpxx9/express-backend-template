@@ -1,4 +1,4 @@
-const { prisma } = require('../../lib/prisma');
+const { prisma } = require('../../src/lib/prisma');
 
 if (!process.env.DATABASE_URL?.includes('_test')) {
   throw new Error(

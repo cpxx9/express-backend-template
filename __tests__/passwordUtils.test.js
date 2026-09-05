@@ -1,4 +1,4 @@
-const { genPassword, validPassword } = require('../utils/passwordUtils');
+const { genPassword, validPassword } = require('../src/utils/passwordUtils');
 
 describe('passwordUtils', () => {
   test('genPassword and validPassword work to validate correct password', () => {

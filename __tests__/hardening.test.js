@@ -1,7 +1,7 @@
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
-const { app } = require('../app');
-const { prisma } = require('../lib/prisma');
+const { app } = require('../src/app');
+const { prisma } = require('../src/lib/prisma');
 const { createUser, getAccessToken, registerUser } = require('./helpers/auth');
 
 describe('updateUser — privilege escalation is blocked (whitelist)', () => {
