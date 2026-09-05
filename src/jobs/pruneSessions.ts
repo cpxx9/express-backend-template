@@ -1,7 +1,7 @@
-const cron = require('node-cron');
-const { prisma } = require('../lib/prisma');
+import cron from 'node-cron';
+import { prisma } from '../lib/prisma';
 
-async function pruneExpiredSessions() {
+export async function pruneExpiredSessions() {
   const { count } = await prisma.refreshToken.deleteMany({
     where: { expiresAt: { lt: new Date() } }
   });
@@ -11,7 +11,7 @@ async function pruneExpiredSessions() {
   return count;
 }
 
-function startSessionPruning() {
+export function startSessionPruning() {
   return cron.schedule(
     '0 3 * * *', // every day at 3:00 AM
     async () => {
@@ -24,5 +24,3 @@ function startSessionPruning() {
     { timezone: 'America/New_York' }
   );
 }
-
-module.exports = { startSessionPruning, pruneExpiredSessions };
