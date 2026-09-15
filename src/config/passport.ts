@@ -3,7 +3,7 @@ import { PassportStatic } from 'passport';
 import {
   Strategy as JwtStrategy,
   ExtractJwt,
-  StrategyOptions,
+  StrategyOptionsWithoutRequest,
   VerifiedCallback
 } from 'passport-jwt';
 import { prisma } from '../lib/prisma';
@@ -15,12 +15,12 @@ interface JwtPayload {
   exp: number;
 }
 
-const options: StrategyOptions = {
+const options: StrategyOptionsWithoutRequest = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.ACCESS_SECRET as string
 };
 
-export default (passport: PassportStatic) => {
+function configurePassport(passport: PassportStatic): void {
   passport.use(
     new JwtStrategy(
       options,
@@ -39,4 +39,6 @@ export default (passport: PassportStatic) => {
       }
     )
   );
-};
+}
+
+export = configurePassport;
