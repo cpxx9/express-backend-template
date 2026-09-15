@@ -7,7 +7,6 @@ import {
   VerifiedCallback
 } from 'passport-jwt';
 import { prisma } from '../lib/prisma';
-import { ACCESS_SECRET } from '../lib/constants';
 
 interface JwtPayload {
   sub: string;
