@@ -1,14 +1,27 @@
-require('dotenv/config');
-const JwtStrategy = require('passport-jwt').Strategy;
-const { ExtractJwt } = require('passport-jwt');
-const { prisma } = require('../lib/prisma');
+import 'dotenv/config';
+import { PassportStatic } from 'passport';
+import {
+  Strategy as JwtStrategy,
+  ExtractJwt,
+  StrategyOptions,
+  VerifiedCallback
+} from 'passport-jwt';
+import { prisma } from '../lib/prisma';
+import { ACCESS_SECRET } from '../lib/constants';
 
-const options = {
+interface JwtPayload {
+  sub: string;
+  admin: boolean;
+  iat: number;
+  exp: number;
+}
+
+const options: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.ACCESS_SECRET
+  secretOrKey: ACCESS_SECRET
 };
 
-module.exports = (passport) => {
+export default (passport: PassportStatic) => {
   passport.use(
     new JwtStrategy(options, async (payload, done) => {
       try {
