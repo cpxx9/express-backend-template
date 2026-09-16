@@ -1,13 +1,14 @@
-const passport = require('passport');
-require('../config/passport')(passport);
-const { Router } = require('express');
-const { checkIfAdmin, checkIfUserMatch } = require('../middleware/auth');
-const {
+import passport from 'passport';
+import passportConfig from '../config/passport';
+passportConfig(passport);
+import { Router } from 'express';
+import { checkIfAdmin, checkIfUserMatch } from '../middleware/auth';
+import {
   listUsers,
   listUser,
   updateUser,
-  deleteUser,
-} = require('../controllers/usersController');
+  deleteUser
+} from '../controllers/usersController';
 
 const usersRouter = Router();
 
@@ -18,4 +19,4 @@ usersRouter.get('/:userId', listUser);
 usersRouter.put('/:userId', updateUser);
 usersRouter.delete('/:userId', deleteUser);
 
-module.exports = { usersRouter };
+export { usersRouter };

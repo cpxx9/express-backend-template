@@ -1,6 +1,7 @@
-const asyncHandler = require('express-async-handler');
-const { prisma } = require('../lib/prisma');
-const CustomNotFoundError = require('../errors/CustomNotFoundError');
+import asyncHandler from 'express-async-handler';
+import { prisma } from '../lib/prisma';
+import CustomNotFoundError from '../errors/CustomNotFoundError';
+import { Request, Response } from 'express';
 
 const userSelect = {
   created: true,
@@ -11,12 +12,14 @@ const userSelect = {
   lastname: true
 };
 
-const listUsers = asyncHandler(async (req, res) => {
+export const listUsers = asyncHandler(async (req: Request, res: Response) => {
   const users = await prisma.user.findMany({ select: userSelect });
   res.status(200).json({ success: true, data: users });
 });
 
-const listUser = asyncHandler(async (req, res) => {
+export const listUser = asyncHandler(async (req: Request, res: Response) => {
+  if (typeof req.params.userId !== 'string')
+    throw new CustomNotFoundError('User not found');
   const user = await prisma.user.findUnique({
     where: { id: req.params.userId },
     select: userSelect
@@ -27,9 +30,11 @@ const listUser = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: user });
 });
 
-const updateUser = asyncHandler(async (req, res) => {
+export const updateUser = asyncHandler(async (req: Request, res: Response) => {
+  if (typeof req.params.userId !== 'string')
+    throw new CustomNotFoundError('User not found');
   const { firstname, lastname, email } = req.body;
-  const data = {};
+  const data: { firstname?: string; lastname?: string; email?: string } = {};
   if (firstname !== undefined) data.firstname = firstname;
   if (lastname !== undefined) data.lastname = lastname;
   if (email !== undefined) data.email = email;
@@ -42,7 +47,9 @@ const updateUser = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: user });
 });
 
-const deleteUser = asyncHandler(async (req, res) => {
+export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
+  if (typeof req.params.userId !== 'string')
+    throw new CustomNotFoundError('User not found');
   const deletedUser = await prisma.user.delete({
     where: { id: req.params.userId },
     omit: { hash: true }
@@ -50,5 +57,3 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({ success: true, data: deletedUser });
 });
-
-module.exports = { listUsers, listUser, updateUser, deleteUser };
