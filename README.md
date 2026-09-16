@@ -37,5 +37,4 @@ REFRESH_SECRET=''
 
 DATABASE_URL="<url of database for tests>"
 
-EXTRA_ORIGINS="<same as above>"
 ```
