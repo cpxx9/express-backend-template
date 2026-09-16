@@ -1,21 +1,18 @@
-const asyncHandler = require('express-async-handler');
-const { prisma } = require('../lib/prisma');
-const {
-  validPassword,
-  issueJWT,
-  hashToken
-} = require('../utils/passwordUtils');
-const { backoffMs } = require('../utils/backoff');
-const { validateLogin } = require('../utils/validations');
-const { handleValidation } = require('../middleware/handleValidation');
-const { refreshCookieOptions } = require('../config/cookieOptions');
-const { LOGIN_FAIL_THRESHOLD } = require('../lib/constants');
-const CustomUnauthorizedError = require('../errors/CustomUnauthorizedError');
+import asyncHandler from 'express-async-handler';
+import { prisma } from '../lib/prisma';
+import { validPassword, issueJWT, hashToken } from '../utils/passwordUtils';
+import { backoffMs } from '../utils/backoff';
+import { validateLogin } from '../utils/validations';
+import { handleValidation } from '../middleware/handleValidation';
+import { refreshCookieOptions } from '../config/cookieOptions';
+import { LOGIN_FAIL_THRESHOLD } from '../lib/constants';
+import CustomUnauthorizedError from '../errors/CustomUnauthorizedError';
+import { Request, Response } from 'express';
 
 const loginController = [
-  validateLogin,
+  ...validateLogin,
   handleValidation,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const user = await prisma.user.findUnique({
       where: {
         username: req.body.username
@@ -36,7 +33,9 @@ const loginController = [
 
     if (!isValid) {
       const failedAttempts = user.failedAttempts + 1;
-      const data = { failedAttempts };
+      const data: { failedAttempts: number; lockedUntil?: Date } = {
+        failedAttempts
+      };
       if (failedAttempts > LOGIN_FAIL_THRESHOLD) {
         data.lockedUntil = new Date(Date.now() + backoffMs(failedAttempts));
       }
@@ -63,7 +62,7 @@ const loginController = [
 
     res.cookie('jwt', refreshToken.token, refreshCookieOptions);
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       token: accessToken.token,
       expiresIn: accessToken.expires
@@ -71,6 +70,4 @@ const loginController = [
   })
 ];
 
-module.exports = {
-  loginController
-};
+export { loginController };
