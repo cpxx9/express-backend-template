@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, ValidationChain, Meta } from 'express-validator';
 
 const existsErr = 'field is required!';
 const usernameLengthErr = 'must be between 5 and 30 characters.';
@@ -9,7 +9,7 @@ const emailErr = 'Must be a valid email address.';
 const passLengthErr = 'must be between 8 and 32 characters.';
 const passMatchErr = 'Passwords must match.';
 
-module.exports.validateLogin = [
+export const validateLogin: ValidationChain[] = [
   body('username')
     .exists({ values: 'falsy' })
     .withMessage(`Username ${existsErr}`)
@@ -21,7 +21,7 @@ module.exports.validateLogin = [
     .trim()
 ];
 
-module.exports.validateUser = [
+export const validateUser: ValidationChain[] = [
   body('username')
     .exists({ values: 'falsy' })
     .withMessage(`Username ${existsErr}`)
@@ -61,7 +61,7 @@ module.exports.validateUser = [
     .exists({ values: 'falsy' })
     .withMessage(`Confirm password ${existsErr}`)
     .trim()
-    .custom((value, { req }) => value === req.body.password)
+    .custom((value: string, { req }: Meta) => value === req.body.password)
     .withMessage(passMatchErr)
 ];
 
