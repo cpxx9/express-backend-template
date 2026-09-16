@@ -1,12 +1,12 @@
-const asyncHandler = require('express-async-handler');
-const { prisma } = require('../lib/prisma');
-const { genPassword, issueJWT, hashToken } = require('../utils/passwordUtils');
-const { validateUser } = require('../utils/validations');
-const { handleValidation } = require('../middleware/handleValidation');
-const { refreshCookieOptions } = require('../config/cookieOptions');
+import asyncHandler from 'express-async-handler';
+import { prisma } from '../lib/prisma';
+import { genPassword, issueJWT, hashToken } from '../utils/passwordUtils';
+import { validateUser } from '../utils/validations';
+import { handleValidation } from '../middleware/handleValidation';
+import { refreshCookieOptions } from '../config/cookieOptions';
 
-const postNewUser = [
-  validateUser,
+export const postNewUser = [
+  ...validateUser,
   handleValidation,
   asyncHandler(async (req, res) => {
     const { hash } = genPassword(req.body.password);
@@ -40,7 +40,3 @@ const postNewUser = [
     });
   })
 ];
-
-module.exports = {
-  postNewUser
-};
