@@ -1,10 +1,21 @@
-const normalizePrismaError = (err) => {
-  const newErr = {};
+import { Request, Response, NextFunction } from 'express';
+
+interface AppError {
+  statusCode?: number;
+  name?: string;
+  message?: string;
+  info?: unknown;
+  code?: string;
+  meta?: { target?: string[] };
+}
+
+const normalizePrismaError = (err: AppError): AppError => {
+  const newErr: AppError = {};
   switch (err.code) {
     case 'P2002':
       newErr.name = `Prisma Error: ${err.code}`;
       newErr.statusCode = 409;
-      newErr.message = `${err.meta.target[0]} field must be unique!`;
+      newErr.message = `${err.meta?.target?.[0]} field must be unique!`;
       break;
     case 'P2025':
       newErr.name = `Prisma Error: ${err.code}`;
@@ -22,11 +33,16 @@ const normalizePrismaError = (err) => {
   return newErr;
 };
 
-const isPrimaError = (err) =>
+const isPrimaError = (err: AppError) =>
   typeof err.code === 'string' && /^P\d{4}$/.test(err.code);
 
 // eslint-disable-next-line no-unused-vars
-const errorController = (err, req, res, next) => {
+export const errorController = (
+  err: AppError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const normalized = isPrimaError(err) ? normalizePrismaError(err) : err;
   const status = normalized.statusCode || 500;
 
@@ -39,5 +55,3 @@ const errorController = (err, req, res, next) => {
     info: normalized.info
   });
 };
-
-module.exports = { errorController };
