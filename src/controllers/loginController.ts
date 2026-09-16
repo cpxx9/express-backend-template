@@ -9,7 +9,7 @@ import { LOGIN_FAIL_THRESHOLD } from '../lib/constants';
 import CustomUnauthorizedError from '../errors/CustomUnauthorizedError';
 import { Request, Response } from 'express';
 
-const loginController = [
+export const loginController = [
   ...validateLogin,
   handleValidation,
   asyncHandler(async (req: Request, res: Response) => {
@@ -69,5 +69,3 @@ const loginController = [
     });
   })
 ];
-
-export { loginController };
