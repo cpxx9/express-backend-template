@@ -1,6 +1,7 @@
-const rateLimit = require('express-rate-limit');
+import { NextFunction, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 
-const passthrough = (req, res, next) => next();
+const passthrough = (req: Request, res: Response, next: NextFunction) => next();
 const isTest = process.env.NODE_ENV === 'test';
 
 const authLimiter = isTest
@@ -30,4 +31,4 @@ const refreshLimiter = isTest
       }
     });
 
-module.exports = { authLimiter, refreshLimiter };
+export { authLimiter, refreshLimiter };
